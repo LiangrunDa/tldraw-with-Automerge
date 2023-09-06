@@ -7,7 +7,7 @@ function App() {
     const {storeWithStatus: store, doc} = useAutomergeStore({})
 
     const saveToFile = () => {
-        const contents = Automerge.save(doc)
+        const contents = Automerge.save(doc.current)
         const blob = new Blob([contents], { type: 'application/octet-stream' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');

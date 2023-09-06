@@ -4,7 +4,7 @@ import {
     createTLStore,
     defaultShapeUtils
 } from '@tldraw/tldraw'
-import {useEffect, useMemo, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import * as Automerge from "@automerge/automerge"
 import {Doc} from "@automerge/automerge";
 import {RecordsDiff} from "@tldraw/store";
@@ -26,9 +26,7 @@ export function useAutomergeStore({
         status: 'loading',
     })
 
-    let doc: Doc<AutomergeDocRecord> = useMemo(() => {
-        return Automerge.init()
-    }, [])
+    const doc = useRef<Doc<AutomergeDocRecord>>(Automerge.init())
 
     useEffect(() => {
         setStoreWithStatus({
@@ -39,7 +37,7 @@ export function useAutomergeStore({
         store.listen(
             function syncStoreChangesToAutomergeDoc({changes}) {
                 // will never rerender
-                doc = Automerge.change(doc, (d) => {
+                doc.current = Automerge.change(doc.current, (d) => {
                     Object.values(changes.added).forEach((record) => {
                         d[record.id] = record
                         console.log("added", record)
