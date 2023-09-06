@@ -2,16 +2,14 @@ import {
     TLAnyShapeUtilConstructor,
     TLStoreWithStatus,
     createTLStore,
-    defaultShapeUtils
+    defaultShapeUtils, TLRecord
 } from '@tldraw/tldraw'
 import {useEffect, useRef, useState} from 'react'
 import * as Automerge from "@automerge/automerge"
 import {Doc} from "@automerge/automerge";
-import {RecordsDiff} from "@tldraw/store";
-import {RecordId} from "@tldraw/tldraw";
 
 interface AutomergeDocRecord {
-    [index: RecordId<never>]:RecordsDiff<never>
+    [key: string]: TLRecord
 }
 
 export function useAutomergeStore({
