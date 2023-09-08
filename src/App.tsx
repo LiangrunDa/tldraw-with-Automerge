@@ -17,7 +17,7 @@ import {Doc} from "@automerge/automerge"
 import React, {useRef, useState} from "react";
 
 export interface AutomergeDocRecord {
-    [key: TLRecord['id']]: string
+    [key: TLRecord['id']]: TLRecord
 }
 
 function createStore(doc: React.MutableRefObject<Doc<AutomergeDocRecord>>) {
@@ -32,12 +32,14 @@ function createStore(doc: React.MutableRefObject<Doc<AutomergeDocRecord>>) {
             name: 'Page 1',
             index: 'a1',
         }),
-
     ])
 
-    const toPut = Object.values(doc.current).map((record) => {
-        return JSON.parse(record) as TLRecord
+    const plainDoc = JSON.parse(JSON.stringify(doc.current))
+
+    const toPut = Object.values(plainDoc).map((v) => {
+        return v as TLRecord
     })
+
     store.put(toPut)
 
     // store.clear()
@@ -47,11 +49,11 @@ function createStore(doc: React.MutableRefObject<Doc<AutomergeDocRecord>>) {
             // will never rerender
             doc.current = Automerge.change(doc.current, (d) => {
                 Object.values(changes.added).forEach((record) => {
-                    d[record.id] = JSON.stringify(record)
+                    d[record.id] = record
                     console.log("added", record)
                 })
                 Object.values(changes.updated).forEach(([, record]) => {
-                    d[record.id] = JSON.stringify(record)
+                    d[record.id] = record
                     console.log("updated", record)
                 })
 
